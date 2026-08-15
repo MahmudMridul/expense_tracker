@@ -1,30 +1,49 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 
-import 'package:expense_tracker/main.dart';
+import 'package:expense_tracker/models/expense_period.dart';
+import 'package:expense_tracker/providers/expense_provider.dart';
+import 'package:expense_tracker/screens/home_page.dart';
+import 'package:expense_tracker/services/expense_repository.dart';
+
+/// In-memory stand-in for [ExpenseRepository] so the widget test never
+/// touches the real sqflite plugin (no platform channel in the test host).
+class FakeExpenseRepository implements ExpenseRepository {
+  @override
+  Future<ExpensePeriod> getCurrentPeriod() async {
+    return ExpensePeriod(id: 1, startedAt: DateTime.now());
+  }
+
+  @override
+  Future<List<ExpensePeriod>> getPreviousPeriods() async => [];
+
+  @override
+  Future<void> addExpense(String type, double amount) async {}
+
+  @override
+  Future<void> closeCurrentPeriod() async {}
+}
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('Home page renders command input and close button', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      ChangeNotifierProvider(
+        create: (_) =>
+            ExpenseProvider(repository: FakeExpenseRepository()),
+        child: const MaterialApp(home: HomePage()),
+      ),
+    );
+    await tester.pumpAndSettle();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    expect(find.byType(TextField), findsOneWidget);
+    expect(find.widgetWithText(OutlinedButton, 'close'), findsOneWidget);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    final closeButton = tester.widget<OutlinedButton>(
+      find.widgetWithText(OutlinedButton, 'close'),
+    );
+    expect(closeButton.onPressed, isNull);
   });
 }
