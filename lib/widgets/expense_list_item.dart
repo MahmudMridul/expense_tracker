@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../models/expense.dart';
-
-String formatBdt(double amount) {
-  final formatted = NumberFormat('#,##0.##', 'en_US').format(amount);
-  return '৳$formatted';
-}
+import '../utils/formatters.dart';
 
 class ExpenseListItem extends StatelessWidget {
   final Expense expense;

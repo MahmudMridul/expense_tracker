@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/expense_provider.dart';
+import '../utils/formatters.dart';
 import '../widgets/expense_list_item.dart';
 import 'history_page.dart';
+import 'stats_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -54,6 +56,15 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('Expense Tracker'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.bar_chart),
+            tooltip: 'Stats',
+            onPressed: () {
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const StatsPage()));
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.history),
             tooltip: 'History',

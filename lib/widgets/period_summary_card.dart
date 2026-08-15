@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../models/expense_period.dart';
+import '../utils/formatters.dart';
 import 'expense_list_item.dart';
 
 class PeriodSummaryCard extends StatelessWidget {
@@ -9,19 +9,12 @@ class PeriodSummaryCard extends StatelessWidget {
 
   const PeriodSummaryCard({super.key, required this.period});
 
-  String get _dateRange {
-    final format = DateFormat('MMM d');
-    final start = format.format(period.startedAt);
-    final end = format.format(period.closedAt ?? period.startedAt);
-    return '$start - $end';
-  }
-
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       child: ExpansionTile(
-        title: Text(_dateRange),
+        title: Text(formatPeriodDateRange(period)),
         subtitle: Text(
           '${period.expenses.length} expenses · ${formatBdt(period.total)}',
         ),
