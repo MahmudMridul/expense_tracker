@@ -93,4 +93,34 @@ class ExpenseRepository {
     );
     await db.insert('periods', {'started_at': now, 'closed_at': null});
   }
+
+  /// Deletes the [count] oldest previous (closed) periods, along with
+  /// their expenses. If fewer than [count] previous periods exist, all
+  /// of them are deleted.
+  Future<void> clearOldestPreviousPeriods(int count) async {
+    final db = await _dbHelper.database;
+    final rows = await db.query(
+      'periods',
+      columns: ['id'],
+      where: 'closed_at IS NOT NULL',
+      orderBy: 'closed_at ASC',
+      limit: count,
+    );
+    if (rows.isEmpty) return;
+
+    final ids = rows.map((row) => row['id'] as int).toList();
+    final placeholders = List.filled(ids.length, '?').join(',');
+    await db.transaction((txn) async {
+      await txn.delete(
+        'expenses',
+        where: 'period_id IN ($placeholders)',
+        whereArgs: ids,
+      );
+      await txn.delete(
+        'periods',
+        where: 'id IN ($placeholders)',
+        whereArgs: ids,
+      );
+    });
+  }
 }

@@ -23,6 +23,9 @@ class FakeExpenseRepository implements ExpenseRepository {
 
   @override
   Future<void> closeCurrentPeriod() async {}
+
+  @override
+  Future<void> clearOldestPreviousPeriods(int count) async {}
 }
 
 void main() {

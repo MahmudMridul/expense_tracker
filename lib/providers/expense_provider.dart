@@ -40,4 +40,9 @@ class ExpenseProvider extends ChangeNotifier {
     await _repository.closeCurrentPeriod();
     await load();
   }
+
+  Future<void> clearOldestPrevious(int count) async {
+    await _repository.clearOldestPreviousPeriods(count);
+    await load();
+  }
 }
