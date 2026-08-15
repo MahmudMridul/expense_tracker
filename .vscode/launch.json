@@ -5,7 +5,9 @@
       "name": "expense_tracker (Debug)",
       "request": "launch",
       "type": "dart",
-      "flutterMode": "debug"
+      "flutterMode": "debug",
+      "deviceId": "emulator-5554",
+      "preLaunchTask": "Start Android Emulator"
     },
     {
       "name": "expense_tracker (Profile)",
