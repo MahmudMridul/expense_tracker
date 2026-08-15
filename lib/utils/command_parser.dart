@@ -20,8 +20,10 @@ ParsedCommand parseCommand(String input) {
   final type = tokens[0];
   final amount = double.tryParse(tokens[1]);
 
-  if (amount == null || amount <= 0) {
-    throw const FormatException('Amount must be a positive number');
+  if (amount == null || amount == 0) {
+    throw const FormatException(
+      'Amount must be a non-zero number (negative allowed for adjustments)',
+    );
   }
 
   return ParsedCommand(type: type, amount: amount);

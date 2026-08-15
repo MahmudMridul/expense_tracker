@@ -32,8 +32,10 @@ void main() {
       expect(() => parseCommand('fare 0'), throwsFormatException);
     });
 
-    test('throws when the amount is negative', () {
-      expect(() => parseCommand('fare -10'), throwsFormatException);
+    test('allows a negative amount for adjustments', () {
+      final result = parseCommand('fare -10');
+      expect(result.type, 'fare');
+      expect(result.amount, -10);
     });
   });
 }
