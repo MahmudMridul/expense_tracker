@@ -13,7 +13,7 @@ class PeriodSummaryCard extends StatelessWidget {
     final format = DateFormat('MMM d');
     final start = format.format(period.startedAt);
     final end = format.format(period.closedAt ?? period.startedAt);
-    return start == end ? start : '$start – $end';
+    return '$start - $end';
   }
 
   @override
