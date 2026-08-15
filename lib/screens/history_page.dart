@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/expense_provider.dart';
+import '../utils/formatters.dart';
 import '../widgets/expense_list_item.dart';
 import '../widgets/period_summary_card.dart';
 
@@ -99,9 +100,18 @@ class HistoryPage extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                child: Text(
-                  'Current',
-                  style: Theme.of(context).textTheme.titleMedium,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Current',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    Text(
+                      formatBdt(current?.total ?? 0),
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ],
                 ),
               ),
               if (current == null || current.expenses.isEmpty)
