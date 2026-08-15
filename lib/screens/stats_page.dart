@@ -19,10 +19,7 @@ class StatsPage extends StatelessWidget {
           );
         }
 
-        final periods = [
-          if (provider.currentPeriod != null) provider.currentPeriod!,
-          ...provider.previousPeriods,
-        ];
+        final periods = provider.allPeriods;
 
         final typeStats = <String, _TypeStat>{};
         for (final period in periods) {

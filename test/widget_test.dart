@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
 import 'package:expense_tracker/models/expense_period.dart';
+import 'package:expense_tracker/models/imported_row.dart';
 import 'package:expense_tracker/providers/expense_provider.dart';
 import 'package:expense_tracker/screens/home_page.dart';
 import 'package:expense_tracker/services/expense_repository.dart';
@@ -26,6 +27,9 @@ class FakeExpenseRepository implements ExpenseRepository {
 
   @override
   Future<void> clearOldestPreviousPeriods(int count) async {}
+
+  @override
+  Future<void> replaceAllData(List<ImportedExpenseRow> rows) async {}
 }
 
 void main() {

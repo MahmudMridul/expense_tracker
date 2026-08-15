@@ -39,6 +39,8 @@ dependencies:
   path: ^1.9.1
   provider: ^6.1.2
   intl: ^0.19.0
+  csv: ^8.0.0
+  file_picker: ^11.0.3
 
 dev_dependencies:
   flutter_test:

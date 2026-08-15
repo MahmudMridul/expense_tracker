@@ -41,12 +41,25 @@ Computed across every period, current through oldest:
   to the nearest integer.
 - Average total expense per period, across all periods.
 
+### Export / Import (backup & restore)
+
+Available from the ⋮ menu on the Home page.
+
+- **Export CSV**: writes every period (current through oldest) and its
+  expenses to a CSV file in the phone's Downloads folder.
+- **Import CSV**: pick a CSV file (in the same format Export produces)
+  and replace all current and previous expenses with its contents.
+  Asks for confirmation first, since this can't be undone, and leaves
+  existing data untouched if the file is malformed.
+
 ## Tech stack
 
 - Flutter (managed via FVM — see [SETUP.md](SETUP.md))
 - `sqflite` for local persistent storage (periods and expenses tables)
 - `provider` for state management
 - `intl` for currency and date formatting
+- `csv` for export/import file parsing, `file_saver` to write the
+  export to Downloads, `file_picker` to select a file to import
 
 ## Setup
 

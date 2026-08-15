@@ -1,5 +1,6 @@
 import '../models/expense.dart';
 import '../models/expense_period.dart';
+import '../models/imported_row.dart';
 import 'database_helper.dart';
 
 class ExpenseRepository {
@@ -121,6 +122,61 @@ class ExpenseRepository {
         where: 'id IN ($placeholders)',
         whereArgs: ids,
       );
+    });
+  }
+
+  /// Replaces all periods and expenses with the contents of [rows] (as
+  /// produced by [parseCsvToRows]). Throws a [FormatException] and leaves
+  /// existing data untouched if [rows] doesn't contain exactly one open
+  /// (current) period.
+  Future<void> replaceAllData(List<ImportedExpenseRow> rows) async {
+    final db = await _dbHelper.database;
+
+    final periodMeta = <String, ({DateTime startedAt, DateTime? closedAt})>{};
+    for (final row in rows) {
+      periodMeta.putIfAbsent(
+        row.periodKey,
+        () => (startedAt: row.periodStartedAt, closedAt: row.periodClosedAt),
+      );
+    }
+
+    final openCount = periodMeta.values
+        .where((p) => p.closedAt == null)
+        .length;
+    if (openCount != 1) {
+      throw const FormatException(
+        'CSV must contain exactly one open (current) period',
+      );
+    }
+
+    await db.transaction((txn) async {
+      await txn.delete('expenses');
+      await txn.delete('periods');
+
+      final periodIds = <String, int>{};
+      final sortedKeys = periodMeta.keys.toList()
+        ..sort(
+          (a, b) =>
+              periodMeta[a]!.startedAt.compareTo(periodMeta[b]!.startedAt),
+        );
+      for (final key in sortedKeys) {
+        final meta = periodMeta[key]!;
+        final id = await txn.insert('periods', {
+          'started_at': meta.startedAt.millisecondsSinceEpoch,
+          'closed_at': meta.closedAt?.millisecondsSinceEpoch,
+        });
+        periodIds[key] = id;
+      }
+
+      for (final row in rows) {
+        if (row.type == null) continue;
+        await txn.insert('expenses', {
+          'period_id': periodIds[row.periodKey],
+          'type': row.type,
+          'amount': row.amount,
+          'created_at': row.expenseCreatedAt!.millisecondsSinceEpoch,
+        });
+      }
     });
   }
 }
